@@ -76,9 +76,8 @@ function Shopping() {
   const totalPages = Math.ceil(displayedProducts.length / itemsPerPage);
   const currentProducts = displayedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const getStockBadge = (product) => {
-    if (product.stock === 0) return { label: 'Out of Stock', color: 'bg-red-500' };
-    if (product.stock <= 3) return { label: `Only ${product.stock} left!`, color: 'bg-orange-500' };
+  const getStatusBadge = (product) => {
+    if (product.status === 'Inactive') return { label: 'Unavailable', color: 'bg-red-500' };
     return null;
   };
 
@@ -185,7 +184,8 @@ function Shopping() {
               }
 
               const originalPrice = product.marketPrice ? product.marketPrice : (product.sellingPrice || product.price) * 1.5;
-              const stockBadge = getStockBadge(product);
+              const statusBadge = getStatusBadge(product);
+              const isInactive = product.status === 'Inactive';
 
               return (
                 <div 
@@ -215,10 +215,10 @@ function Shopping() {
                     >
                       <FiHeart size={18} className={isWishlisted(product._id) ? "fill-red-500 text-red-500" : ""} />
                     </button>
-                    {/* Stock Badge */}
-                    {stockBadge && (
-                      <span className={`absolute top-3 left-3 ${stockBadge.color} text-white text-[10px] font-bold px-2 py-1 rounded-full shadow`}>
-                        {stockBadge.label}
+                    {/* Status Badge */}
+                    {statusBadge && (
+                      <span className={`absolute top-3 left-3 ${statusBadge.color} text-white text-[10px] font-bold px-2 py-1 rounded-full shadow`}>
+                        {statusBadge.label}
                       </span>
                     )}
                   </div>
@@ -259,10 +259,10 @@ function Shopping() {
                       </div>
                       <button
                         onClick={(e) => handleAddToCart(e, product)}
-                        disabled={product.stock === 0}
-                        className={`w-full px-2 py-1.5 sm:px-4 sm:py-2 rounded-full font-bold text-xs sm:text-base transition-colors shadow-sm ${product.stock === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#fce028] text-black hover:bg-yellow-400'}`}
+                        disabled={isInactive}
+                        className={`w-full px-2 py-1.5 sm:px-4 sm:py-2 rounded-full font-bold text-xs sm:text-base transition-colors shadow-sm ${isInactive ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#fce028] text-black hover:bg-yellow-400'}`}
                       >
-                        {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                        {isInactive ? 'Unavailable' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>
