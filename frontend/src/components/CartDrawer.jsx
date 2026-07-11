@@ -26,6 +26,11 @@ function CartDrawer() {
       return;
     }
 
+    if (!address.trim()) {
+      toast.error('Please enter your delivery address to proceed.');
+      return;
+    }
+
     try {
       // Save each cart item as a booking with the user's real mobile number
       const bookingPromises = cart.map(item => {
