@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../api';
 
 function Profile() {
@@ -8,8 +9,6 @@ function Profile() {
   const [mobile, setMobile] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!localStorage.getItem('token')) {
@@ -25,7 +24,7 @@ function Profile() {
       setEmail(res.data.user.email || '');
       setMobile(res.data.user.mobile || '');
     } catch {
-      setError('Failed to load profile.');
+      toast.error('Failed to load profile.');
     } finally {
       setLoading(false);
     }
@@ -34,14 +33,12 @@ function Profile() {
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setSuccess('');
-    setError('');
     try {
       const res = await api.put('/me', { mobile });
       localStorage.setItem('userMobile', res.data.user.mobile || '');
-      setSuccess('Profile updated successfully! ✅');
+      toast.success('Profile updated successfully! ✅');
     } catch {
-      setError('Failed to update profile. Please try again.');
+      toast.error('Failed to update profile. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -98,10 +95,6 @@ function Profile() {
                 />
               </div>
             </div>
-
-            {/* Feedback */}
-            {success && <p className="text-green-600 text-sm font-medium bg-green-50 px-4 py-2 rounded-lg">{success}</p>}
-            {error && <p className="text-red-500 text-sm font-medium bg-red-50 px-4 py-2 rounded-lg">{error}</p>}
 
             {/* Buttons */}
             <div className="flex gap-3 pt-2">

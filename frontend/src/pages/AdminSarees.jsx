@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiEdit2, FiTrash2, FiX, FiFolder } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import api from '../api';
 
 function AdminSarees() {
@@ -66,7 +67,7 @@ function AdminSarees() {
         updateVariant(id, 'images', [...existingImages, ...fileData]);
       } catch (err) {
         console.error("Error uploading files", err);
-        alert("Failed to upload images. Please check backend connection.");
+        toast.error("Failed to upload images. Please check backend connection.");
       }
     }
   };
@@ -136,17 +137,17 @@ function AdminSarees() {
       
       if (editingId) {
         await api.put(`/products/${editingId}`, payload);
-        alert('Saree updated successfully!');
+        toast.success('Saree updated successfully!');
       } else {
         await api.post('/products', payload);
-        alert('Saree added successfully!');
+        toast.success('Saree added successfully!');
       }
 
       closeModal();
       fetchSarees();
     } catch (error) {
       console.error(error);
-      alert('Failed to save saree. Ensure backend is connected.');
+      toast.error('Failed to save saree. Ensure backend is connected.');
     }
   };
 
@@ -154,10 +155,11 @@ function AdminSarees() {
     if (window.confirm('Are you sure you want to delete this saree?')) {
       try {
         await api.delete(`/products/${id}`);
+        toast.success('Saree deleted successfully!');
         fetchSarees();
       } catch (error) {
         console.error(error);
-        alert('Failed to delete.');
+        toast.error('Failed to delete.');
       }
     }
   };

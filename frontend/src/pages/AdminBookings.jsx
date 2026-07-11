@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import api from '../api';
 
 const STATUS_STYLES = {
@@ -36,10 +37,11 @@ function AdminBookings() {
   const handleStatusChange = async (id, newStatus) => {
     try {
       await api.put(`/bookings/${id}`, { status: newStatus });
+      toast.success('Status updated successfully!');
       fetchBookings();
     } catch (error) {
       console.error('Failed to update status', error);
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
@@ -47,9 +49,10 @@ function AdminBookings() {
     if (window.confirm('Are you sure you want to delete this booking?')) {
       try {
         await api.delete(`/bookings/${id}`);
+        toast.success('Booking deleted successfully!');
         fetchBookings();
       } catch (error) {
-        alert('Failed to delete');
+        toast.error('Failed to delete booking');
       }
     }
   };

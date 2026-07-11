@@ -1,0 +1,95 @@
+# RiyaTex Feature Enhancement Plan
+
+## Overview
+Implementing features across three categories:
+1. **Shopping Experience** — Search, Price Sort/Filter, Stock Badge, Blouse Info, Image Zoom
+2. **User Features** — Redesigned Order History, Profile Edit Page, Address at Checkout, Wishlist→Cart
+3. **Admin Features** — Order Status UI polish, Sales Analytics Chart, Low Stock Alert, Product Search
+
+---
+
+## Shopping Experience
+
+### [MODIFY] [Shopping.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/pages/Shopping.jsx)
+- **Product Search Bar** — wire up the existing `<input>` to filter `products` client-side by name, fabric, or color
+- **Price Sort** — add a "Sort by Price" dropdown (Low→High, High→Low) that sorts products before rendering
+- **Stock Badge** — show a red `"Low Stock"` or `"Out of Stock"` badge on the product card when `product.stock <= 3`
+- **Blouse Info** — add a small text line `"Unstitched Blouse Included"` under the fabric name
+- **Image Zoom on Hover** — already has `hover:scale-105` on img; enhance to `hover:scale-110 transition-transform duration-500` with overflow-hidden container
+
+---
+
+## User Features
+
+### [NEW] [frontend/src/pages/Profile.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/pages/Profile.jsx)
+- New page with a form to update mobile number
+- Calls `PUT /api/me` to update mobile in the database
+- Shows current email (read-only) and editable mobile
+
+### [MODIFY] [backend/routes/authRoutes.js](file:///e:/code/Projects/RiyaTex2.0/backend/routes/authRoutes.js)
+- Add `PUT /api/me` route to update user profile (mobile number)
+
+### [MODIFY] [backend/controllers/authController.js](file:///e:/code/Projects/RiyaTex2.0/backend/controllers/authController.js)
+- Add `updateMe` controller: allows user to update their own mobile number
+
+### [MODIFY] [frontend/src/pages/Dashboard.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/pages/Dashboard.jsx)
+- Redesign the order history table with color-coded status badges:
+  - `Pending` → yellow, `Order confirmed` → blue, `Out for delivery` → orange, `Delivered` → green
+- Add a "Edit Profile" button linking to `/profile`
+- Add a "Continue Shopping" button
+
+### [MODIFY] [frontend/src/components/CartDrawer.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/components/CartDrawer.jsx)
+- Add an **address input field** in the checkout section so it's included in the WhatsApp message and saved to the booking
+
+### [MODIFY] [backend/models/Booking.js](file:///e:/code/Projects/RiyaTex2.0/backend/models/Booking.js)
+- Add `address` field (String) to the booking schema
+
+### [MODIFY] [frontend/src/components/WishlistDrawer.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/components/WishlistDrawer.jsx)
+- Add "Add to Cart" button on each wishlist item (moves item from wishlist to cart with one click)
+
+### [MODIFY] [frontend/src/App.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/App.jsx)
+- Add route `/profile` for the new Profile page
+
+---
+
+## Admin Features
+
+### [MODIFY] [frontend/src/pages/AdminDashboard.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/pages/AdminDashboard.jsx)
+- **Sales Analytics Chart** — Add a simple bar chart using inline SVG or `recharts` library showing orders per status (Pending, Confirmed, Delivered, Cancelled)
+- **Low Stock Alert** — Fetch products and highlight any with `stock <= 3` in a dedicated "⚠️ Low Stock" section card
+
+### [MODIFY] [frontend/src/pages/AdminSarees.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/pages/AdminSarees.jsx)
+- **Product Search** — Add a search input at the top that filters the saree table client-side by name or fabric in real-time
+
+### [MODIFY] [frontend/src/pages/AdminBookings.jsx](file:///e:/code/Projects/RiyaTex2.0/frontend/src/pages/AdminBookings.jsx)
+- **Status Update UI** — polish the status dropdown with color-coded styles:
+  - Pending → yellow background, Confirmed → blue, Out for delivery → orange, Delivered → green, Cancelled → red
+- Add a search/filter bar to filter bookings by customer email or status
+
+---
+
+## Backend Changes Summary
+
+| File | Change |
+|---|---|
+| `backend/models/Booking.js` | Add `address` field |
+| `backend/controllers/authController.js` | Add `updateMe` function |
+| `backend/routes/authRoutes.js` | Add `PUT /api/me` route |
+
+---
+
+## Verification Plan
+
+### Automated
+- Confirm backend server starts with no errors after model changes
+- Confirm all existing API routes still work
+
+### Manual
+- Shopping page: search filters products, sort reorders them, stock badge shows on low-stock items
+- User dashboard: order status badges are color-coded, "Edit Profile" link works
+- Profile page: mobile number can be updated and persists
+- Cart drawer: address field captured and sent in WhatsApp message
+- Wishlist drawer: "Add to Cart" button works
+- Admin dashboard: analytics chart shows order counts, low stock section visible
+- Admin sarees: search bar filters table
+- Admin bookings: status dropdown is color-coded, filter works

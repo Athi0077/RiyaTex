@@ -13,13 +13,17 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminSarees from './pages/AdminSarees';
 import AdminBookings from './pages/AdminBookings';
 import Profile from './pages/Profile';
+import FloatingFeatures from './components/FloatingFeatures';
+import { Toaster } from 'react-hot-toast';
 import './index.css';
 
 function App() {
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <WishlistDrawer />
       <CartDrawer />
+      <FloatingFeatures />
       <Routes>
       {/* Public Routes with Standard Layout */}
       <Route path="/" element={

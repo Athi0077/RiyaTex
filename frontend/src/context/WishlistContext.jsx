@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export const WishlistContext = createContext();
 
@@ -35,8 +36,10 @@ export function WishlistProvider({ children }) {
     const existing = wishlist.find(item => item._id === product._id);
     if (existing) {
       removeFromWishlist(product._id);
+      toast.success('Removed from wishlist', { icon: '💔' });
     } else {
       addToWishlist(product, selectedColorIndex);
+      toast.success('Added to wishlist', { icon: '❤️' });
     }
   };
 

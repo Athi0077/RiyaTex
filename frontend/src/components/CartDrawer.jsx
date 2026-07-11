@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { CartContext } from '../context/CartContext';
 import { FiX, FiShoppingCart, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../api';
 
 function CartDrawer() {
@@ -71,9 +72,10 @@ function CartDrawer() {
 
       // Open WhatsApp in new tab
       window.open(whatsappUrl, '_blank');
+      toast.success('Order placed successfully!', { duration: 3000 });
     } catch (error) {
       console.error(error);
-      alert('Failed to place order. Ensure backend is connected.');
+      toast.error('Failed to place order. Ensure backend is connected.');
     }
   };
 
@@ -136,7 +138,7 @@ function CartDrawer() {
               return (
                 <div key={`${item._id}-${colorIdx}`} className="flex gap-4 p-3 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white">
                   <div className="w-24 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                    <img src={displayImg} alt={item.name} className="w-full h-full object-cover" />
+                    <img src={displayImg} alt={item.name} loading="lazy" className="w-full h-full object-cover" />
                   </div>
                   
                   <div className="flex flex-col flex-1 justify-between">

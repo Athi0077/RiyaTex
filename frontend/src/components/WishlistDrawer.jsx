@@ -78,7 +78,7 @@ function WishlistDrawer() {
               return (
                 <div key={item._id} className="flex gap-4 p-3 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white group">
                   <div className="w-24 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                    <img src={displayImg} alt={item.name} className="w-full h-full object-cover" />
+                    <img src={displayImg} alt={item.name} loading="lazy" className="w-full h-full object-cover" />
                   </div>
                   
                   <div className="flex flex-col flex-1">

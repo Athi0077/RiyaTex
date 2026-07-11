@@ -173,7 +173,7 @@ function AdminDashboard() {
                 <div key={saree._id} className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
                     {img
-                      ? <img src={img} alt={saree.name} className="w-10 h-12 object-cover rounded shadow-sm border border-gray-200" />
+                      ? <img src={img} alt={saree.name} loading="lazy" className="w-10 h-12 object-cover rounded shadow-sm border border-gray-200" />
                       : <div className="w-10 h-12 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">IMG</div>
                     }
                     <div>
