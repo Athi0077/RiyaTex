@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiEdit2, FiTrash2, FiX, FiFolder } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import api from '../api';
+import Pagination from '../components/Pagination';
 
 function AdminSarees() {
   const [sarees, setSarees] = useState([]);
@@ -9,6 +10,8 @@ function AdminSarees() {
   const [editingId, setEditingId] = useState(null);
   const [variants, setVariants] = useState([{ id: Date.now(), name: '', hex: '#000000' }]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   
   // Form State
   const [name, setName] = useState('');
@@ -22,6 +25,10 @@ function AdminSarees() {
   useEffect(() => {
     fetchSarees();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const fetchSarees = async () => {
     try {
@@ -169,6 +176,9 @@ function AdminSarees() {
     s.fabric?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredSarees.length / itemsPerPage);
+  const currentSarees = filteredSarees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
       
@@ -212,7 +222,7 @@ function AdminSarees() {
                   </td>
                 </tr>
               )}
-              {filteredSarees.map((saree) => (
+              {currentSarees.map((saree) => (
                 <tr key={saree._id} className="hover:bg-gray-50 transition-colors">
                   <td className="py-3 px-6">
                     <div className="w-12 h-16 bg-gray-200 rounded shadow-sm border border-gray-200 flex items-center justify-center text-xs text-gray-400">Img</div>
@@ -235,6 +245,15 @@ function AdminSarees() {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {currentSarees.length > 0 && (
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
 
       {/* Add Saree Modal */}
       {isModalOpen && (

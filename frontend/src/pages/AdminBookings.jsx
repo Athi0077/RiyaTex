@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../api';
+import Pagination from '../components/Pagination';
 
 const STATUS_STYLES = {
   'Pending':          { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-300' },
@@ -15,10 +16,16 @@ function AdminBookings() {
   const [stats, setStats] = useState({ total: 0, cancelled: 0, revenue: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
 
   const fetchBookings = async () => {
     try {
@@ -65,6 +72,9 @@ function AdminBookings() {
     const matchStatus = statusFilter === 'All' || b.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+  const currentBookings = filteredBookings.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -136,11 +146,12 @@ function AdminBookings() {
                   </td>
                 </tr>
               )}
-              {filteredBookings.map((b, index) => {
+              {currentBookings.map((b, index) => {
                 const style = STATUS_STYLES[b.status] || STATUS_STYLES['Pending'];
+                const displayIndex = (currentPage - 1) * itemsPerPage + index + 1;
                 return (
                   <tr key={b._id} className="hover:bg-white/60 transition-colors">
-                    <td className="py-3 px-4 text-gray-400">{index + 1}</td>
+                    <td className="py-3 px-4 text-gray-400">{displayIndex}</td>
                     <td className="py-3 px-4 text-gray-800 text-xs">{b.customerEmail}</td>
                     <td className="py-3 px-4 text-gray-600">{b.mobile || 'N/A'}</td>
                     <td className="py-3 px-4 text-gray-800 font-medium">{b.sareeName}</td>
@@ -180,6 +191,16 @@ function AdminBookings() {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {currentBookings.length > 0 && (
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
     </div>
   );
 }

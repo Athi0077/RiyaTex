@@ -4,6 +4,7 @@ import { FiHeart, FiSearch } from 'react-icons/fi';
 import api from '../api';
 import { WishlistContext } from '../context/WishlistContext';
 import { CartContext } from '../context/CartContext';
+import Pagination from '../components/Pagination';
 import bgImg from '../assets/background2.webp';
 
 function Shopping() {
@@ -17,11 +18,19 @@ function Shopping() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('default');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts(fabricParam);
+    setCurrentPage(1); // Reset page on fabric change
   }, [fabricParam]);
+
+  // Reset page when search or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortOrder]);
 
   const fetchProducts = async (fabric) => {
     setLoading(true);
@@ -63,6 +72,9 @@ function Shopping() {
       if (sortOrder === 'high') return (b.sellingPrice || 0) - (a.sellingPrice || 0);
       return 0;
     });
+
+  const totalPages = Math.ceil(displayedProducts.length / itemsPerPage);
+  const currentProducts = displayedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const getStockBadge = (product) => {
     if (product.stock === 0) return { label: 'Out of Stock', color: 'bg-red-500' };
@@ -155,9 +167,9 @@ function Shopping() {
               <div key={i} className="rounded-xl bg-white/60 animate-pulse h-80"></div>
             ))}
           </div>
-        ) : displayedProducts.length > 0 ? (
+        ) : currentProducts.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-8">
-            {displayedProducts.map(product => {
+            {currentProducts.map(product => {
               const selectedColorIndex = selectedColors[product._id] || 0;
 
               let displayImage = 'https://placehold.co/400x300?text=No+Image';
@@ -266,6 +278,15 @@ function Shopping() {
               <button onClick={() => setSearchQuery('')} className="mt-4 text-brand underline text-sm">Clear search</button>
             )}
           </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && currentProducts.length > 0 && (
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         )}
 
       </div>
