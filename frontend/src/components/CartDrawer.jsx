@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CartContext } from '../context/CartContext';
 import { FiX, FiShoppingCart, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import api from '../api';
 function CartDrawer() {
   const { cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const [address, setAddress] = useState('');
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + ((item.sellingPrice || item.price) * item.quantity), 0);
@@ -36,6 +37,7 @@ function CartDrawer() {
           amount: (item.sellingPrice || item.price) * item.quantity,
           paymentType: 'cod',
           status: 'Pending',
+          address: address,
           date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
         };
         return api.post('/bookings', payload);
@@ -54,7 +56,8 @@ function CartDrawer() {
         `🛍️ *New Order from Riya Tex Website*\n\n` +
         `👤 *Customer Details:*\n` +
         `Email: ${email}\n` +
-        `Mobile: ${mobile || 'Not provided'}\n\n` +
+        `Mobile: ${mobile || 'Not provided'}\n` +
+        `Address: ${address || 'Not provided'}\n\n` +
         `📦 *Order Items:*\n\n${orderLines}\n\n` +
         `💰 *Total Amount: ₹${totalPrice}*\n` +
         `🚚 Payment: Cash on Delivery\n\n` +
@@ -178,11 +181,19 @@ function CartDrawer() {
         {/* Footer */}
         {cart.length > 0 && (
           <div className="p-6 border-t border-gray-200 bg-white">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-3">
               <span className="font-bold text-gray-800">Total ({totalItems} items)</span>
               <span className="font-bold text-brand text-lg">₹{totalPrice}</span>
             </div>
-            <button 
+            {/* Address Input */}
+            <textarea
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              placeholder="📍 Delivery address (street, city, pincode)..."
+              rows={2}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-brand resize-none mb-3"
+            />
+            <button
               onClick={handleCheckout}
               className="w-full bg-[#9e1a1a] hover:bg-[#800000] text-white font-bold py-3 rounded-lg transition-colors shadow-md text-center"
             >

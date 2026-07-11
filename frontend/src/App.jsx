@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminSarees from './pages/AdminSarees';
 import AdminBookings from './pages/AdminBookings';
+import Profile from './pages/Profile';
 import './index.css';
 
 function App() {
@@ -62,6 +63,15 @@ function App() {
           <Navbar />
           <main className="flex-grow">
             <Dashboard />
+          </main>
+          <Footer />
+        </div>
+      } />
+      <Route path="/profile" element={
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            <Profile />
           </main>
           <Footer />
         </div>

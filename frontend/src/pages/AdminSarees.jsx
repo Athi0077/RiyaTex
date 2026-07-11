@@ -7,6 +7,7 @@ function AdminSarees() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [variants, setVariants] = useState([{ id: Date.now(), name: '', hex: '#000000' }]);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Form State
   const [name, setName] = useState('');
@@ -161,12 +162,25 @@ function AdminSarees() {
     }
   };
 
+  const filteredSarees = sarees.filter(s =>
+    s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.fabric?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
       
       <h1 className="text-3xl font-bold text-center text-[#9e1a1a] mb-8">Sarees Management</h1>
       
-      <div className="flex justify-end mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="🔍 Search by name or fabric..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          className="border border-gray-300 rounded-full px-5 py-2 w-full sm:w-72 focus:outline-none focus:border-brand bg-white text-sm"
+        />
         <button 
           onClick={() => setIsModalOpen(true)}
           className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded shadow transition-colors flex items-center gap-2"
@@ -190,12 +204,14 @@ function AdminSarees() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 text-sm">
-              {sarees.length === 0 && (
+              {filteredSarees.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="py-4 text-center text-gray-500">No sarees available</td>
+                  <td colSpan="7" className="py-4 text-center text-gray-500">
+                    {searchQuery ? `No sarees found for "${searchQuery}"` : 'No sarees available'}
+                  </td>
                 </tr>
               )}
-              {sarees.map((saree) => (
+              {filteredSarees.map((saree) => (
                 <tr key={saree._id} className="hover:bg-gray-50 transition-colors">
                   <td className="py-3 px-6">
                     <div className="w-12 h-16 bg-gray-200 rounded shadow-sm border border-gray-200 flex items-center justify-center text-xs text-gray-400">Img</div>

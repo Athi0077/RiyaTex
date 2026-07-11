@@ -57,3 +57,18 @@ export const getMe = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const updateMe = async (req, res) => {
+  try {
+    const { mobile, name } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { ...(mobile !== undefined && { mobile }), ...(name !== undefined && { name }) },
+      { new: true }
+    ).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};

@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { FiHeart } from 'react-icons/fi';
+import { FiHeart, FiSearch } from 'react-icons/fi';
 import api from '../api';
 import { WishlistContext } from '../context/WishlistContext';
 import { CartContext } from '../context/CartContext';
-// import bgImg from '../assets/background.webp';
 import bgImg from '../assets/background2.webp';
 
 function Shopping() {
@@ -16,6 +15,8 @@ function Shopping() {
   const [loading, setLoading] = useState(true);
   const [selectedColors, setSelectedColors] = useState({});
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('default');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +45,29 @@ function Shopping() {
     addToCart(product, selectedColorIndex);
   };
 
+  // Filter + Sort products
+  const displayedProducts = products
+    .filter(p => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        p.name?.toLowerCase().includes(q) ||
+        p.fabric?.toLowerCase().includes(q) ||
+        p.colorVariants?.some(v => v.name?.toLowerCase().includes(q))
+      );
+    })
+    .sort((a, b) => {
+      if (sortOrder === 'low') return (a.sellingPrice || 0) - (b.sellingPrice || 0);
+      if (sortOrder === 'high') return (b.sellingPrice || 0) - (a.sellingPrice || 0);
+      return 0;
+    });
+
+  const getStockBadge = (product) => {
+    if (product.stock === 0) return { label: 'Out of Stock', color: 'bg-red-500' };
+    if (product.stock <= 3) return { label: `Only ${product.stock} left!`, color: 'bg-orange-500' };
+    return null;
+  };
+
   return (
     <div className="min-h-[60vh] py-8 relative bg-cover bg-center bg-fixed" style={{ backgroundImage: `url(${bgImg})` }}>
       <div className="absolute inset-0 bg-white/30 z-0"></div>
@@ -51,7 +75,7 @@ function Shopping() {
       {/* Login Required Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-in">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
             <div className="text-5xl mb-4">🔐</div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">Login Required</h3>
             <p className="text-gray-500 text-sm mb-6">Please login first before adding items to your cart and making a purchase.</p>
@@ -72,20 +96,38 @@ function Shopping() {
           </div>
         </div>
       )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Controls */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="border border-gray-300 rounded-full px-6 py-2 w-full md:w-1/3 focus:outline-none focus:border-brand"
-          />
-          <div className="flex gap-4">
-            <select 
-              value={fabricParam} 
+          {/* Search Bar */}
+          <div className="relative w-full md:w-1/3">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by name, fabric, color..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="border border-gray-300 rounded-full pl-10 pr-6 py-2 w-full focus:outline-none focus:border-brand bg-white/80 backdrop-blur-sm"
+            />
+          </div>
+          <div className="flex gap-3 flex-wrap justify-center">
+            {/* Sort */}
+            <select
+              value={sortOrder}
+              onChange={e => setSortOrder(e.target.value)}
+              className="border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-brand bg-white/80 backdrop-blur-sm"
+            >
+              <option value="default">Sort: Default</option>
+              <option value="low">Price: Low → High</option>
+              <option value="high">Price: High → Low</option>
+            </select>
+            {/* Fabric Filter */}
+            <select
+              value={fabricParam}
               onChange={(e) => setSearchParams({ fabric: e.target.value })}
-              className="border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-brand bg-white"
+              className="border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-brand bg-white/80 backdrop-blur-sm"
             >
               <option value="All">All Products</option>
               <option value="Silk">Silk</option>
@@ -106,14 +148,16 @@ function Shopping() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="text-center text-gray-500">Loading products...</div>
-        ) : products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {products.map(product => {
-              // Determine which color index is currently selected for this product
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="rounded-xl bg-white/60 animate-pulse h-80"></div>
+            ))}
+          </div>
+        ) : displayedProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {displayedProducts.map(product => {
               const selectedColorIndex = selectedColors[product._id] || 0;
-              
-              // Extract the image for the currently selected color variant
+
               let displayImage = 'https://placehold.co/400x300?text=No+Image';
               if (product.colorVariants && product.colorVariants.length > selectedColorIndex) {
                 const variant = product.colorVariants[selectedColorIndex];
@@ -126,39 +170,44 @@ function Shopping() {
                 displayImage = product.image;
               }
 
-              // Use market price if available, else standard fallback
               const originalPrice = product.marketPrice ? product.marketPrice : (product.sellingPrice || product.price) * 1.5;
+              const stockBadge = getStockBadge(product);
 
               return (
-                <div key={product._id} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex flex-col bg-white">
+                <div key={product._id} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col bg-white">
                   <div className="w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-                    <Link to={`/product/${product._id}`} className="w-full h-full cursor-pointer">
-                      <img 
-                        src={displayImage} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    <Link to={`/product/${product._id}`} className="w-full h-full cursor-pointer overflow-hidden">
+                      <img
+                        src={displayImage}
+                        alt={product.name}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                         onError={(e) => { e.target.src = 'https://placehold.co/400x300?text=Image+Not+Found' }}
                       />
                     </Link>
-                    <button 
+                    {/* Wishlist button */}
+                    <button
                       onClick={() => toggleWishlist(product, selectedColorIndex)}
-                      className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors group/heart"
+                      className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors"
                       title={isWishlisted(product._id) ? "Remove from wishlist" : "Add to wishlist"}
                     >
-                      <FiHeart 
-                        size={18} 
-                        className={isWishlisted(product._id) ? "fill-red-500 text-red-500" : ""} 
-                      />
+                      <FiHeart size={18} className={isWishlisted(product._id) ? "fill-red-500 text-red-500" : ""} />
                     </button>
+                    {/* Stock Badge */}
+                    {stockBadge && (
+                      <span className={`absolute top-3 left-3 ${stockBadge.color} text-white text-[10px] font-bold px-2 py-1 rounded-full shadow`}>
+                        {stockBadge.label}
+                      </span>
+                    )}
                   </div>
-                  
+
                   <div className="p-5 flex flex-col flex-grow">
                     <span className="text-yellow-600 font-bold text-xs uppercase tracking-wider mb-1">
                       {product.status || 'Active'}
                     </span>
-                    <h3 className="text-xl font-bold text-gray-900 leading-tight mb-1">{product.name}</h3>
-                    <p className="text-sm text-gray-500 mb-4">{product.fabric || product.category || 'Silk'}</p>
-                    
+                    <h3 className="text-xl font-bold text-gray-900 leading-tight mb-0.5">{product.name}</h3>
+                    <p className="text-sm text-gray-500 mb-1">{product.fabric || product.category || 'Silk'}</p>
+                    <p className="text-xs text-green-600 font-medium mb-3">✓ Unstitched Blouse Included</p>
+
                     {product.colorVariants && product.colorVariants.length > 0 && (
                       <div className="mb-4">
                         <p className="text-sm font-semibold text-gray-700 mb-2">Available Colors:</p>
@@ -175,17 +224,18 @@ function Shopping() {
                         </div>
                       </div>
                     )}
-                    
+
                     <div className="mt-auto">
                       <div className="flex items-baseline mb-4">
                         <span className="text-[#c94121] font-bold text-2xl">₹{product.sellingPrice || product.price}</span>
                         <span className="line-through text-gray-400 text-sm ml-2">₹{originalPrice}</span>
                       </div>
-                      <button 
+                      <button
                         onClick={() => handleAddToCart(product)}
-                        className="w-full bg-[#fce028] text-black px-4 py-2 rounded-full font-bold hover:bg-yellow-400 transition-colors shadow-sm"
+                        disabled={product.stock === 0}
+                        className={`w-full px-4 py-2 rounded-full font-bold transition-colors shadow-sm ${product.stock === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#fce028] text-black hover:bg-yellow-400'}`}
                       >
-                        Add to Cart
+                        {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>
@@ -194,8 +244,12 @@ function Shopping() {
             })}
           </div>
         ) : (
-          <div className="text-center text-gray-600 mt-20 text-lg">
-            No products available
+          <div className="text-center mt-20">
+            <div className="text-6xl mb-4">🔍</div>
+            <p className="text-gray-600 text-lg">No products found{searchQuery ? ` for "${searchQuery}"` : ''}.</p>
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="mt-4 text-brand underline text-sm">Clear search</button>
+            )}
           </div>
         )}
 
