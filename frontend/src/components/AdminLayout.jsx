@@ -19,7 +19,7 @@ function AdminLayout() {
       <div className="absolute inset-0 bg-white/50 z-0"></div>
       
       {/* Admin Header */}
-      <header className="bg-[#111] text-white relative z-10">
+      <header className="bg-[#111] text-white relative z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             {/* Logo */}
