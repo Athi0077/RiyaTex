@@ -130,7 +130,7 @@ function ProductDetails() {
               <span className="text-lg line-through text-gray-400">₹{originalPrice}</span>
             </div>
 
-            {/* Status & Stock */}
+            {/* Status */}
             <div className="space-y-2 mb-10 text-sm">
               <p>
                 <span className="font-bold text-gray-700">Status:</span>{' '}
@@ -138,19 +138,25 @@ function ProductDetails() {
                   {product.status || 'Active'}
                 </span>
               </p>
-              <p>
-                <span className="font-bold text-gray-700">Stock:</span> {product.stock || 150}
-              </p>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-4">
-              <button 
-                onClick={handleBuyNow}
-                className="w-full bg-[#9e1a1a] hover:bg-[#800000] text-white font-bold py-4 rounded-xl transition-colors shadow-lg text-lg text-center"
-              >
-                Buy Now
-              </button>
+              {product.status === 'Inactive' ? (
+                <button 
+                  disabled
+                  className="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed text-lg text-center"
+                >
+                  Currently Unavailable
+                </button>
+              ) : (
+                <button 
+                  onClick={handleBuyNow}
+                  className="w-full bg-[#9e1a1a] hover:bg-[#800000] text-white font-bold py-4 rounded-xl transition-colors shadow-lg text-lg text-center"
+                >
+                  Buy Now
+                </button>
+              )}
               
               <button 
                 onClick={() => navigate('/shopping')}
