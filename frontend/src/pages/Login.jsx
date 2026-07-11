@@ -13,16 +13,16 @@ function Login() {
     e.preventDefault();
     try {
       if (isRegister) {
-        await axios.post('http://localhost:5000/api/register', { email, password, mobile });
+        await axios.post('https://riyatex.onrender.com/api/register', { email, password, mobile });
         // Auto-login after registration
-        const response = await axios.post('http://localhost:5000/api/login', { email, password });
+        const response = await axios.post('https://riyatex.onrender.com/api/login', { email, password });
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('role', response.data.user.role);
         localStorage.setItem('userEmail', response.data.user.email);
         localStorage.setItem('userMobile', response.data.user.mobile || '');
         navigate('/');
       } else {
-        const response = await axios.post('http://localhost:5000/api/login', { email, password });
+        const response = await axios.post('https://riyatex.onrender.com/api/login', { email, password });
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('role', response.data.user.role);
         localStorage.setItem('userEmail', response.data.user.email);
