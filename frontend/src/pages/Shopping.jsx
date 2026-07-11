@@ -35,7 +35,9 @@ function Shopping() {
     setLoading(false);
   };
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    e.preventDefault();
     const token = localStorage.getItem('token');
     if (!token) {
       setShowLoginModal(true);
@@ -174,9 +176,13 @@ function Shopping() {
               const stockBadge = getStockBadge(product);
 
               return (
-                <div key={product._id} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col bg-white">
+                <div 
+                  key={product._id} 
+                  onClick={() => navigate(`/product/${product._id}`)}
+                  className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col bg-white cursor-pointer"
+                >
                   <div className="w-full h-48 sm:h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-                    <Link to={`/product/${product._id}`} className="w-full h-full cursor-pointer overflow-hidden">
+                    <div className="w-full h-full overflow-hidden">
                       <img
                         src={displayImage}
                         alt={product.name}
@@ -184,10 +190,14 @@ function Shopping() {
                         className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                         onError={(e) => { e.target.src = 'https://placehold.co/400x300?text=Image+Not+Found' }}
                       />
-                    </Link>
+                    </div>
                     {/* Wishlist button */}
                     <button
-                      onClick={() => toggleWishlist(product, selectedColorIndex)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        toggleWishlist(product, selectedColorIndex);
+                      }}
                       className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors"
                       title={isWishlisted(product._id) ? "Remove from wishlist" : "Add to wishlist"}
                     >
@@ -216,7 +226,11 @@ function Shopping() {
                           {product.colorVariants.map((variant, idx) => (
                             <button
                               key={idx}
-                              onClick={() => setSelectedColors(prev => ({ ...prev, [product._id]: idx }))}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                setSelectedColors(prev => ({ ...prev, [product._id]: idx }));
+                              }}
                               className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 focus:outline-none transition-all ${selectedColorIndex === idx ? 'ring-2 ring-offset-1 sm:ring-offset-2 ring-gray-400 border-white scale-110' : 'border-gray-200'}`}
                               style={{ backgroundColor: variant.hex || '#000' }}
                               title={variant.name}
@@ -232,7 +246,7 @@ function Shopping() {
                         <span className="line-through text-gray-400 text-xs sm:text-sm ml-1 sm:ml-2">₹{originalPrice}</span>
                       </div>
                       <button
-                        onClick={() => handleAddToCart(product)}
+                        onClick={(e) => handleAddToCart(e, product)}
                         disabled={product.stock === 0}
                         className={`w-full px-2 py-1.5 sm:px-4 sm:py-2 rounded-full font-bold text-xs sm:text-base transition-colors shadow-sm ${product.stock === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#fce028] text-black hover:bg-yellow-400'}`}
                       >
