@@ -14,7 +14,6 @@ function AdminDashboard() {
   });
   const [sareesOverview, setSareesOverview] = useState([]);
   const [allBookings, setAllBookings] = useState([]);
-  const [lowStockProducts, setLowStockProducts] = useState([]);
 
   useEffect(() => {
     fetchStats();
@@ -35,9 +34,6 @@ function AdminDashboard() {
     try {
       const res = await api.get('/products');
       setSareesOverview(res.data.slice(0, 5));
-      // Low stock: stock <= 3
-      const low = res.data.filter(p => p.stock !== undefined && p.stock <= 3);
-      setLowStockProducts(low);
     } catch (error) {
       console.error('Failed to fetch sarees', error);
     }
@@ -85,52 +81,29 @@ function AdminDashboard() {
         </div>
       </div>
 
-      {/* Sales Chart + Low Stock */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
-        {/* Bar Chart */}
-        <div className="lg:col-span-2 bg-white/70 backdrop-blur-md border border-white/50 rounded-xl shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">📊 Orders by Status</h2>
-          {allBookings.length === 0 ? (
-            <p className="text-gray-400 text-sm py-8 text-center">No order data yet.</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={statusCounts} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-                <Tooltip
-                  formatter={(value) => [value, 'Orders']}
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                />
-                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                  {statusCounts.map((entry, index) => (
-                    <Cell key={index} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-
-        {/* Low Stock Alert */}
-        <div className="bg-white/70 backdrop-blur-md border border-white/50 rounded-xl shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">⚠️ Low Stock</h2>
-          {lowStockProducts.length === 0 ? (
-            <p className="text-green-600 text-sm font-medium">✅ All products are well stocked!</p>
-          ) : (
-            <div className="space-y-3">
-              {lowStockProducts.map(p => (
-                <div key={p._id} className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700 truncate max-w-[140px]">{p.name}</span>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${p.stock === 0 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
-                    {p.stock === 0 ? 'Out' : `${p.stock} left`}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      {/* Sales Chart */}
+      <div className="mb-8 bg-white/70 backdrop-blur-md border border-white/50 rounded-xl shadow-sm p-6">
+        <h2 className="text-lg font-bold text-gray-800 mb-4">📊 Orders by Status</h2>
+        {allBookings.length === 0 ? (
+          <p className="text-gray-400 text-sm py-8 text-center">No order data yet.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={statusCounts} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+              <Tooltip
+                formatter={(value) => [value, 'Orders']}
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+              />
+              <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                {statusCounts.map((entry, index) => (
+                  <Cell key={index} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* Recent Bookings + Sarees Overview */}

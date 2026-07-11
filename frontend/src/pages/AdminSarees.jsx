@@ -200,7 +200,6 @@ function AdminSarees() {
                 <th className="py-4 px-6">Name</th>
                 <th className="py-4 px-6">Fabric</th>
                 <th className="py-4 px-6">Price</th>
-                <th className="py-4 px-6">Stock</th>
                 <th className="py-4 px-6">Status</th>
                 <th className="py-4 px-6">Edit/Delete</th>
               </tr>
@@ -208,7 +207,7 @@ function AdminSarees() {
             <tbody className="divide-y divide-gray-200 text-sm">
               {filteredSarees.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="py-4 text-center text-gray-500">
+                  <td colSpan="6" className="py-4 text-center text-gray-500">
                     {searchQuery ? `No sarees found for "${searchQuery}"` : 'No sarees available'}
                   </td>
                 </tr>
@@ -221,7 +220,6 @@ function AdminSarees() {
                   <td className="py-3 px-6 text-gray-800">{saree.name}</td>
                   <td className="py-3 px-6 text-gray-600">{saree.fabric}</td>
                   <td className="py-3 px-6 text-gray-800">₹{saree.sellingPrice}</td>
-                  <td className="py-3 px-6 text-gray-600">{saree.stock}</td>
                   <td className="py-3 px-6 text-gray-600">{saree.status}</td>
                   <td className="py-3 px-6 text-gray-500 flex space-x-3 mt-4">
                     <button onClick={() => handleEditClick(saree)} className="hover:text-blue-600 transition-colors" title="Edit">
