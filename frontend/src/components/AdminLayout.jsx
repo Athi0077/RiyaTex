@@ -30,7 +30,7 @@ function AdminLayout() {
             </div>
 
             {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden md:flex items-center space-x-8 z-1000">
               <Link to="/admin" className="text-sm font-medium hover:text-gray-300 transition-colors">
                 Dashboard
               </Link>
@@ -62,7 +62,7 @@ function AdminLayout() {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-[#111] border-t border-gray-800 absolute w-full left-0 top-16 shadow-xl">
+          <div className="md:hidden bg-[#111] border-t border-gray-800 absolute w-full left-0 top-16 shadow-xl z-50">
             <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/admin" className="block px-3 py-3 text-base font-medium text-white hover:bg-gray-800 rounded-md">
                 Dashboard
