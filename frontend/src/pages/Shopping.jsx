@@ -148,13 +148,13 @@ function Shopping() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-8">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="rounded-xl bg-white/60 animate-pulse h-80"></div>
             ))}
           </div>
         ) : displayedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-8">
             {displayedProducts.map(product => {
               const selectedColorIndex = selectedColors[product._id] || 0;
 
@@ -175,7 +175,7 @@ function Shopping() {
 
               return (
                 <div key={product._id} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col bg-white">
-                  <div className="w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                  <div className="w-full h-48 sm:h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                     <Link to={`/product/${product._id}`} className="w-full h-full cursor-pointer overflow-hidden">
                       <img
                         src={displayImage}
@@ -201,13 +201,13 @@ function Shopping() {
                     )}
                   </div>
 
-                  <div className="p-5 flex flex-col flex-grow">
-                    <span className="text-yellow-600 font-bold text-xs uppercase tracking-wider mb-1">
+                  <div className="p-3 sm:p-5 flex flex-col flex-grow">
+                    <span className="text-yellow-600 font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1">
                       {product.status || 'Active'}
                     </span>
-                    <h3 className="text-xl font-bold text-gray-900 leading-tight mb-0.5">{product.name}</h3>
-                    <p className="text-sm text-gray-500 mb-1">{product.fabric || product.category || 'Silk'}</p>
-                    <p className="text-xs text-green-600 font-medium mb-3">✓ Unstitched Blouse Included</p>
+                    <h3 className="text-sm sm:text-xl font-bold text-gray-900 leading-tight mb-0.5 line-clamp-2">{product.name}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1">{product.fabric || product.category || 'Silk'}</p>
+                    <p className="text-[10px] sm:text-xs text-green-600 font-medium mb-2 sm:mb-3">✓ Unstitched Blouse</p>
 
                     {product.colorVariants && product.colorVariants.length > 0 && (
                       <div className="mb-4">
@@ -217,7 +217,7 @@ function Shopping() {
                             <button
                               key={idx}
                               onClick={() => setSelectedColors(prev => ({ ...prev, [product._id]: idx }))}
-                              className={`w-6 h-6 rounded-full border-2 focus:outline-none transition-all ${selectedColorIndex === idx ? 'ring-2 ring-offset-2 ring-gray-400 border-white scale-110' : 'border-gray-200'}`}
+                              className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 focus:outline-none transition-all ${selectedColorIndex === idx ? 'ring-2 ring-offset-1 sm:ring-offset-2 ring-gray-400 border-white scale-110' : 'border-gray-200'}`}
                               style={{ backgroundColor: variant.hex || '#000' }}
                               title={variant.name}
                             />
@@ -227,14 +227,14 @@ function Shopping() {
                     )}
 
                     <div className="mt-auto">
-                      <div className="flex items-baseline mb-4">
-                        <span className="text-[#c94121] font-bold text-2xl">₹{product.sellingPrice || product.price}</span>
-                        <span className="line-through text-gray-400 text-sm ml-2">₹{originalPrice}</span>
+                      <div className="flex items-baseline mb-2 sm:mb-4 flex-wrap">
+                        <span className="text-[#c94121] font-bold text-lg sm:text-2xl">₹{product.sellingPrice || product.price}</span>
+                        <span className="line-through text-gray-400 text-xs sm:text-sm ml-1 sm:ml-2">₹{originalPrice}</span>
                       </div>
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={product.stock === 0}
-                        className={`w-full px-4 py-2 rounded-full font-bold transition-colors shadow-sm ${product.stock === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#fce028] text-black hover:bg-yellow-400'}`}
+                        className={`w-full px-2 py-1.5 sm:px-4 sm:py-2 rounded-full font-bold text-xs sm:text-base transition-colors shadow-sm ${product.stock === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#fce028] text-black hover:bg-yellow-400'}`}
                       >
                         {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                       </button>
