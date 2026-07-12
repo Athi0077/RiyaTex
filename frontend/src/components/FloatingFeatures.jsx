@@ -74,7 +74,7 @@ function FloatingFeatures() {
     <>
       {/* Floating Buttons */}
 
-      <div className="fixed bottom-28 sm:bottom-6 right-5 flex flex-col gap-3 z-40">
+      <div className="fixed bottom-28 sm:bottom-6 right-5 flex flex-col gap-3 z-[99999]">
         <button
           onClick={openWhatsApp}
           className="bg-[#25D366] text-white p-3 rounded-full shadow-lg hover:scale-110 transition"
@@ -94,7 +94,7 @@ function FloatingFeatures() {
 
       {/* Bottom Navigation */}
 
-      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50">
+      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-[99999]">
         <div className="relative bg-white rounded-full shadow-2xl h-20 flex items-center justify-around">
 
           {/* HOME */}
