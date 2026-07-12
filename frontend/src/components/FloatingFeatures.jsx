@@ -20,6 +20,8 @@ function FloatingFeatures() {
   const { cart, setIsCartOpen } = useContext(CartContext);
   const { wishlist, setIsDrawerOpen } = useContext(WishlistContext);
 
+  const [showShopMenu, setShowShopMenu] = useState(false);
+
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlist.length;
 
@@ -33,6 +35,16 @@ function FloatingFeatures() {
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const closeMenu = () => {
+      setShowShopMenu(false);
+    };
+
+    window.addEventListener("click", closeMenu);
+
+    return () => window.removeEventListener("click", closeMenu);
   }, []);
 
   const scrollToTop = () => {
@@ -113,11 +125,10 @@ function FloatingFeatures() {
             )}
 
             <span
-              className={`text-[11px] mt-1 ${
-                activeItem("/")
-                  ? "text-[#8f0000] font-semibold"
-                  : "text-gray-400"
-              }`}
+              className={`text-[11px] mt-1 ${activeItem("/")
+                ? "text-[#8f0000] font-semibold"
+                : "text-gray-400"
+                }`}
             >
               Home
             </span>
@@ -125,30 +136,92 @@ function FloatingFeatures() {
 
           {/* SHOP */}
 
-          <Link
-            to="/shopping"
+          <div
             className="relative flex-1 flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
           >
-            <FloatingIcon
-              active={activeItem("/shopping")}
-              icon={<FiShoppingBag size={22} />}
-            />
+            {/* Floating Shop Menu */}
+            {showShopMenu && (
+              <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-72 bg-white rounded-3xl shadow-2xl border border-gray-200 p-4 animate-fadeIn z-[99999]">
 
-            {!activeItem("/shopping") && (
-              <FiShoppingBag size={22} className="text-gray-400" />
+                <div className="grid grid-cols-2 gap-3">
+
+                  <Link
+                    to="/shopping?fabric=Silk"
+                    onClick={() => setShowShopMenu(false)}
+                    className="bg-[#8f0000] text-white rounded-full py-2 text-center text-sm font-semibold hover:opacity-90 transition"
+                  >
+                    Silk
+                  </Link>
+
+                  <Link
+                    to="/shopping?fabric=Cotton"
+                    onClick={() => setShowShopMenu(false)}
+                    className="bg-[#8f0000] text-white rounded-full py-2 text-center text-sm font-semibold hover:opacity-90 transition"
+                  >
+                    Cotton
+                  </Link>
+
+                  <Link
+                    to="/shopping?fabric=Designed"
+                    onClick={() => setShowShopMenu(false)}
+                    className="bg-[#8f0000] text-white rounded-full py-2 text-center text-sm font-semibold hover:opacity-90 transition"
+                  >
+                    Designed
+                  </Link>
+
+                  <Link
+                    to="/shopping?fabric=Kids"
+                    onClick={() => setShowShopMenu(false)}
+                    className="bg-[#8f0000] text-white rounded-full py-2 text-center text-sm font-semibold hover:opacity-90 transition"
+                  >
+                    Kids
+                  </Link>
+
+                  <Link
+                    to="/shopping?fabric=Dhotis"
+                    onClick={() => setShowShopMenu(false)}
+                    className="col-span-2 bg-[#8f0000] text-white rounded-full py-2 text-center text-sm font-semibold hover:opacity-90 transition"
+                  >
+                    Dhotis
+                  </Link>
+
+                </div>
+
+                {/* Arrow */}
+                <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-4 h-4 bg-white border-r border-b border-gray-200 rotate-45"></div>
+              </div>
             )}
 
-            <span
-              className={`text-[11px] mt-1 ${
-                activeItem("/shopping")
+            {/* Shop Button */}
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowShopMenu((prev) => !prev);
+              }}
+              className="relative flex flex-col items-center justify-center"
+            >
+              <FloatingIcon
+                active={showShopMenu || activeItem("/shopping")}
+                icon={<FiShoppingBag size={22} />}
+              />
+
+              {!showShopMenu && !activeItem("/shopping") && (
+                <FiShoppingBag size={22} className="text-gray-400" />
+              )}
+
+              <span
+                className={`text-[11px] mt-1 ${showShopMenu || activeItem("/shopping")
                   ? "text-[#8f0000] font-semibold"
                   : "text-gray-400"
-              }`}
-            >
-              Shop
-            </span>
-          </Link>
-
+                  }`}
+              >
+                Shop
+              </span>
+            </button>
+          </div>
           {/* SAVED */}
 
           <button
@@ -199,11 +272,10 @@ function FloatingFeatures() {
             )}
 
             <span
-              className={`text-[11px] mt-1 ${
-                activeItem("/dashboard")
-                  ? "text-[#8f0000] font-semibold"
-                  : "text-gray-400"
-              }`}
+              className={`text-[11px] mt-1 ${activeItem("/dashboard")
+                ? "text-[#8f0000] font-semibold"
+                : "text-gray-400"
+                }`}
             >
               Profile
             </span>
