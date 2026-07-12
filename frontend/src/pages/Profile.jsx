@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
+import { FiArrowLeft } from "react-icons/fi";
 
 function Profile() {
   const navigate = useNavigate();
@@ -99,11 +100,10 @@ function Profile() {
             {/* Buttons */}
             <div className="flex gap-3 pt-2">
               <button
-                type="button"
-                onClick={() => navigate('/dashboard')}
-                className="flex-1 py-3 border border-gray-300 rounded-xl text-gray-600 font-medium hover:bg-gray-50 transition-colors"
-              >
-                ← Back
+                onClick={() => setIsCartOpen(false)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#8f0000] text-white hover:bg-[#730000] transition-all duration-300 shadow-md">
+                <FiArrowLeft size={18} />
+                <span className="text-sm font-medium">Back</span>
               </button>
               <button
                 type="submit"

@@ -4,6 +4,7 @@ import { FiX, FiShoppingCart, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
+import { FiArrowLeft } from "react-icons/fi";
 
 function CartDrawer() {
   const { cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, clearCart } = useContext(CartContext);
@@ -88,30 +89,30 @@ function CartDrawer() {
     <>
       {/* Overlay */}
       {isCartOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-[60] transition-opacity" 
+        <div
+          className="fixed inset-0 bg-black/50 z-[60] transition-opacity"
           onClick={() => setIsCartOpen(false)}
         />
       )}
 
       {/* Drawer */}
-      <div 
-        className={`fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${
-          isCartOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+      <div
+        className={`fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${isCartOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <button 
-            onClick={() => setIsCartOpen(false)} 
-            className="text-gray-500 hover:text-gray-800 transition-colors"
+          <button
+            onClick={() => setIsCartOpen(false)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#8f0000] text-white hover:bg-[#730000] transition-all duration-300 shadow-md"
           >
-            ←
+            <FiArrowLeft size={18} />
+            <span className="text-sm font-medium">Back</span>
           </button>
           <h2 className="text-xl font-bold text-brand flex items-center gap-2">
             <FiShoppingCart className="fill-current" /> Shopping Bag
           </h2>
-          <button 
+          <button
             onClick={clearCart}
             className="text-xs font-semibold border border-red-200 text-red-500 px-3 py-1 rounded-full hover:bg-red-50 transition-colors"
           >
@@ -145,7 +146,7 @@ function CartDrawer() {
                   <div className="w-24 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
                     <img src={displayImg} alt={item.name} loading="lazy" className="w-full h-full object-cover" />
                   </div>
-                  
+
                   <div className="flex flex-col flex-1 justify-between">
                     <div>
                       <h3 className="font-bold text-gray-800 text-sm">{item.name}</h3>
@@ -160,17 +161,17 @@ function CartDrawer() {
 
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center border border-gray-200 rounded-full bg-gray-50 px-2 py-1">
-                        <button 
+                        <button
                           onClick={() => updateQuantity(item._id, colorIdx, item.quantity - 1)}
                           className="px-2 text-gray-500 hover:text-black transition-colors"
                         >-</button>
                         <span className="px-3 font-semibold text-sm">{item.quantity}</span>
-                        <button 
+                        <button
                           onClick={() => updateQuantity(item._id, colorIdx, item.quantity + 1)}
                           className="px-2 text-gray-500 hover:text-black transition-colors"
                         >+</button>
                       </div>
-                      <button 
+                      <button
                         onClick={() => removeFromCart(item._id, colorIdx)}
                         className="text-gray-400 hover:text-red-500 transition-colors p-2"
                         title="Remove from cart"
