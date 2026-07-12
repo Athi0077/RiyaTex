@@ -1,104 +1,214 @@
-import { useState, useEffect, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FiArrowUp, FiHome, FiShoppingBag, FiHeart, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { FaWhatsapp } from 'react-icons/fa';
-import { CartContext } from '../context/CartContext';
-import { WishlistContext } from '../context/WishlistContext';
+import { useState, useEffect, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  FiArrowUp,
+  FiHome,
+  FiShoppingBag,
+  FiHeart,
+  FiShoppingCart,
+  FiUser,
+} from "react-icons/fi";
+import { FaWhatsapp } from "react-icons/fa";
+import { CartContext } from "../context/CartContext";
+import { WishlistContext } from "../context/WishlistContext";
 
 function FloatingFeatures() {
   const [showTopBtn, setShowTopBtn] = useState(false);
+
   const location = useLocation();
+
   const { cart, setIsCartOpen } = useContext(CartContext);
   const { wishlist, setIsDrawerOpen } = useContext(WishlistContext);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlist.length;
 
-  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowTopBtn(true);
-      } else {
-        setShowTopBtn(false);
-      }
+      setShowTopBtn(window.scrollY > 300);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
   const openWhatsApp = () => {
-    const ADMIN_WHATSAPP = '918056510875';
-    window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=Hello Riya Tex, I have a query.`, '_blank');
+    const ADMIN_WHATSAPP = "";
+    window.open(
+      `https://wa.me/${ADMIN_WHATSAPP}?text=Hello R.S Sarees, I have a query.`,
+      "_blank"
+    );
   };
 
-  if (isAdminRoute) return null; // Don't show these on admin pages
+  if (isAdminRoute) return null;
+
+  const activeItem = (path) =>
+    location.pathname === path ||
+    (path === "/dashboard" && location.pathname === "/profile");
+
+  const FloatingIcon = ({ active, icon }) => {
+    if (!active) return null;
+
+    return (
+      <div className="absolute -top-10">
+        <div className="w-16 h-16 rounded-full bg-white border-[6px] border-[#f8dede] shadow-xl flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-[#8f0000] text-white flex items-center justify-center">
+            {icon}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
-      {/* Floating Action Buttons (Desktop & Mobile) */}
-      <div className="fixed bottom-24 sm:bottom-6 right-6 flex flex-col gap-4 z-40">
-        {/* WhatsApp Button */}
+      {/* Floating Buttons */}
+
+      <div className="fixed bottom-28 sm:bottom-6 right-5 flex flex-col gap-3 z-40">
         <button
           onClick={openWhatsApp}
-          className="bg-[#25D366] hover:bg-[#1ebd5b] text-white p-3 rounded-full shadow-lg transition-transform hover:scale-110 flex items-center justify-center animate-bounce"
-          title="Chat on WhatsApp"
+          className="bg-[#25D366] text-white p-3 rounded-full shadow-lg hover:scale-110 transition"
         >
           <FaWhatsapp size={28} />
         </button>
 
-        {/* Back to Top Button */}
         {showTopBtn && (
           <button
             onClick={scrollToTop}
-            className="bg-gray-800 hover:bg-black text-white p-3 rounded-full shadow-lg transition-opacity flex items-center justify-center opacity-80 hover:opacity-100"
-            title="Back to Top"
+            className="bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-black"
           >
             <FiArrowUp size={24} />
           </button>
         )}
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 flex justify-between items-center px-6 py-3 pb-safe">
-        <Link to="/" className={`flex flex-col items-center gap-1 ${location.pathname === '/' ? 'text-brand' : 'text-gray-500'}`}>
-          <FiHome size={22} />
-          <span className="text-[10px] font-medium">Home</span>
-        </Link>
-        <Link to="/shopping" className={`flex flex-col items-center gap-1 ${location.pathname === '/shopping' ? 'text-brand' : 'text-gray-500'}`}>
-          <FiShoppingBag size={22} />
-          <span className="text-[10px] font-medium">Shop</span>
-        </Link>
-        <button onClick={() => setIsDrawerOpen(true)} className="flex flex-col items-center gap-1 text-gray-500 relative">
-          <FiHeart size={22} />
-          <span className="text-[10px] font-medium">Saved</span>
-          {wishlistCount > 0 && (
-            <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-              {wishlistCount}
+      {/* Bottom Navigation */}
+
+      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-50">
+        <div className="relative bg-white rounded-full shadow-2xl h-20 flex items-center justify-around">
+
+          {/* HOME */}
+
+          <Link
+            to="/"
+            className="relative flex-1 flex flex-col items-center justify-center"
+          >
+            <FloatingIcon
+              active={activeItem("/")}
+              icon={<FiHome size={22} />}
+            />
+
+            {!activeItem("/") && (
+              <FiHome size={22} className="text-gray-400" />
+            )}
+
+            <span
+              className={`text-[11px] mt-1 ${
+                activeItem("/")
+                  ? "text-[#8f0000] font-semibold"
+                  : "text-gray-400"
+              }`}
+            >
+              Home
             </span>
-          )}
-        </button>
-        <button onClick={() => setIsCartOpen(true)} className="flex flex-col items-center gap-1 text-gray-500 relative">
-          <FiShoppingCart size={22} />
-          <span className="text-[10px] font-medium">Cart</span>
-          {cartCount > 0 && (
-            <span className="absolute -top-1 -right-2 bg-brand text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-              {cartCount}
+          </Link>
+
+          {/* SHOP */}
+
+          <Link
+            to="/shopping"
+            className="relative flex-1 flex flex-col items-center justify-center"
+          >
+            <FloatingIcon
+              active={activeItem("/shopping")}
+              icon={<FiShoppingBag size={22} />}
+            />
+
+            {!activeItem("/shopping") && (
+              <FiShoppingBag size={22} className="text-gray-400" />
+            )}
+
+            <span
+              className={`text-[11px] mt-1 ${
+                activeItem("/shopping")
+                  ? "text-[#8f0000] font-semibold"
+                  : "text-gray-400"
+              }`}
+            >
+              Shop
             </span>
-          )}
-        </button>
-        <Link to="/dashboard" className={`flex flex-col items-center gap-1 ${location.pathname === '/dashboard' || location.pathname === '/profile' ? 'text-brand' : 'text-gray-500'}`}>
-          <FiUser size={22} />
-          <span className="text-[10px] font-medium">Profile</span>
-        </Link>
+          </Link>
+
+          {/* SAVED */}
+
+          <button
+            onClick={() => setIsDrawerOpen(true)}
+            className="relative flex-1 flex flex-col items-center justify-center"
+          >
+            <FiHeart size={22} className="text-gray-400" />
+
+            {wishlistCount > 0 && (
+              <span className="absolute top-0 right-6 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+
+            <span className="text-[11px] mt-1 text-gray-400">Saved</span>
+          </button>
+
+          {/* CART */}
+
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative flex-1 flex flex-col items-center justify-center"
+          >
+            <FiShoppingCart size={22} className="text-gray-400" />
+
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-6 bg-[#8f0000] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+
+            <span className="text-[11px] mt-1 text-gray-400">Cart</span>
+          </button>
+
+          {/* PROFILE */}
+
+          <Link
+            to="/dashboard"
+            className="relative flex-1 flex flex-col items-center justify-center"
+          >
+            <FloatingIcon
+              active={activeItem("/dashboard")}
+              icon={<FiUser size={22} />}
+            />
+
+            {!activeItem("/dashboard") && (
+              <FiUser size={22} className="text-gray-400" />
+            )}
+
+            <span
+              className={`text-[11px] mt-1 ${
+                activeItem("/dashboard")
+                  ? "text-[#8f0000] font-semibold"
+                  : "text-gray-400"
+              }`}
+            >
+              Profile
+            </span>
+          </Link>
+        </div>
       </div>
     </>
   );
