@@ -1,9 +1,8 @@
 import { useContext } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import { CartContext } from '../context/CartContext';
-import { FiX, FiHeart } from 'react-icons/fi';
+import {  FiHeart,FiArrowLeft } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowLeft } from "react-icons/fi";
 
 function WishlistDrawer() {
   const { wishlist, isDrawerOpen, setIsDrawerOpen, removeFromWishlist, clearWishlist } = useContext(WishlistContext);
@@ -34,22 +33,31 @@ function WishlistDrawer() {
           }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+
+          {/* Back Button */}
           <button
-            onClick={() => setIsCartOpen(false)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#8f0000] text-white hover:bg-[#730000] transition-all duration-300 shadow-md">
+            onClick={() => setIsDrawerOpen(false)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#8f0000] text-white hover:bg-[#730000] transition-all duration-300 shadow-md"
+          >
             <FiArrowLeft size={18} />
             <span className="text-sm font-medium">Back</span>
           </button>
-          <h2 className="text-xl font-bold text-brand flex items-center gap-2">
-            <FiHeart className="fill-current" /> Wishlist
+
+          {/* Title */}
+          <h2 className="text-xl font-bold text-[#8f0000] flex items-center gap-2">
+            <FiHeart className="fill-current" />
+            Wishlist
           </h2>
+
+          {/* Clear Button */}
           <button
             onClick={clearWishlist}
-            className="text-xs font-semibold border border-red-200 text-red-500 px-3 py-1 rounded-full hover:bg-red-50 transition-colors"
+            className="text-xs font-semibold border border-red-200 text-red-500 px-3 py-1 rounded-full hover:bg-red-50 transition"
           >
             Clear All
           </button>
+
         </div>
 
         {/* Content */}
