@@ -3,6 +3,7 @@ import { WishlistContext } from '../context/WishlistContext';
 import { CartContext } from '../context/CartContext';
 import {  FiHeart,FiArrowLeft } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function WishlistDrawer() {
   const { wishlist, isDrawerOpen, setIsDrawerOpen, removeFromWishlist, clearWishlist } = useContext(WishlistContext);
@@ -22,14 +23,14 @@ function WishlistDrawer() {
       {/* Overlay */}
       {isDrawerOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[60] transition-opacity"
+          className="fixed inset-0 bg-black/50 z-[100000] transition-opacity"
           onClick={() => setIsDrawerOpen(false)}
         />
       )}
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white z-[100001] shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
       >
         {/* Header */}
@@ -96,7 +97,10 @@ function WishlistDrawer() {
                         <p className="text-xs text-gray-500">{item.fabric || item.category}</p>
                       </div>
                       <button
-                        onClick={() => removeFromWishlist(item._id)}
+                        onClick={() => {
+                          removeFromWishlist(item._id);
+                          toast.success('Removed from wishlist', { icon: '💔', duration: 2000 });
+                        }}
                         className="text-red-400 hover:text-red-600 transition-colors p-1"
                         title="Remove from wishlist"
                       >

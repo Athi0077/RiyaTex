@@ -49,10 +49,12 @@ export function CartProvider({ children }) {
     setCart(prev => prev.filter(
       item => !(item._id === productId && item.selectedColorIndex === selectedColorIndex)
     ));
+    toast.success('Item removed from cart', { icon: '🗑️', duration: 2000 });
   };
 
   const clearCart = () => {
     setCart([]);
+    toast.success('Cart cleared', { icon: '🧹', duration: 2000 });
   };
 
   return (

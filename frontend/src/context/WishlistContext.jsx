@@ -30,6 +30,7 @@ export function WishlistProvider({ children }) {
 
   const clearWishlist = () => {
     setWishlist([]);
+    toast.success('Wishlist cleared', { icon: '🧹', duration: 2000 });
   };
 
   const toggleWishlist = (product, selectedColorIndex) => {

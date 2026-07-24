@@ -20,7 +20,7 @@ import './index.css';
 function App() {
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} containerStyle={{ zIndex: 9999999 }} />
       <WishlistDrawer />
       <CartDrawer />
       <FloatingFeatures />
