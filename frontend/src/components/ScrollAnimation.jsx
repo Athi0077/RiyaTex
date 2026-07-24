@@ -18,11 +18,13 @@ const ScrollAnimation = () => {
     const preloadImages = async () => {
       const promises = [];
       const loadedImages = [];
+      const isMobile = window.innerWidth < 768;
+      const frameFolder = isMobile ? 'frames2' : 'frames';
 
       for (let i = 1; i <= frameCount; i++) {
         const index = i.toString().padStart(3, '0');
         const img = new Image();
-        img.src = `/frames/ezgif-frame-${index}.jpg`;
+        img.src = `/${frameFolder}/ezgif-frame-${index}.jpg`;
 
         // img.decode() forces the browser to decode the image in the background.
         // This prevents main-thread blocking (jank) when drawing the image for the first time.
@@ -109,9 +111,9 @@ const ScrollAnimation = () => {
         const hRatio = logicalWidth / img.naturalWidth;
         const vRatio = logicalHeight / img.naturalHeight;
 
-        // On mobile, use Math.min to show the full video without cropping (object-fit: contain)
-        // On desktop, use Math.max to fill the screen (object-fit: cover)
-        const ratio = isMobile ? Math.min(hRatio, vRatio) : Math.max(hRatio, vRatio);
+        // Use Math.max to fill the screen (object-fit: cover) for both mobile and desktop
+        // This prevents sharp borders when the frame doesn't fill the canvas
+        const ratio = Math.max(hRatio, vRatio);
 
         const drawWidth = img.naturalWidth * ratio;
         const drawHeight = img.naturalHeight * ratio;
@@ -128,26 +130,8 @@ const ScrollAnimation = () => {
           centerShift_x, centerShift_y, drawWidth, drawHeight // Destination
         );
 
-        // Fade top and bottom edges to blend seamlessly with the CSS background image
-        const fadeHeight = Math.min(150, drawHeight * 0.25);
-        
-        ctx.globalCompositeOperation = 'destination-out';
-        
-        // Top fade
-        const gradientTop = ctx.createLinearGradient(0, centerShift_y, 0, centerShift_y + fadeHeight);
-        gradientTop.addColorStop(0, 'rgba(0,0,0,1)');
-        gradientTop.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = gradientTop;
-        ctx.fillRect(0, centerShift_y - 1, logicalWidth, fadeHeight + 1); // -1/+1 prevents thin artifacts
-        
-        // Bottom fade
-        const gradientBottom = ctx.createLinearGradient(0, centerShift_y + drawHeight - fadeHeight, 0, centerShift_y + drawHeight);
-        gradientBottom.addColorStop(0, 'rgba(0,0,0,0)');
-        gradientBottom.addColorStop(1, 'rgba(0,0,0,1)');
-        ctx.fillStyle = gradientBottom;
-        ctx.fillRect(0, centerShift_y + drawHeight - fadeHeight, logicalWidth, fadeHeight + 1);
-        
-        // Reset composite operation
+        // Fade top and bottom edges removed as requested to show normally
+        // Reset composite operation to ensure normal drawing just in case
         ctx.globalCompositeOperation = 'source-over';
 
         lastDrawnFrameRef.current = currentFrame; // Cache the drawn frame
@@ -168,6 +152,10 @@ const ScrollAnimation = () => {
       gsap.fromTo('.hero-subtitle',
         { opacity: 0, y: 100, rotationX: -50, transformPerspective: 800 },
         { opacity: 1, y: 0, rotationX: 0, duration: 1.2, delay: 0.4, ease: "power3.out" }
+      );
+      gsap.fromTo('.contact-pill',
+        { opacity: 0, y: 100, rotationX: -50, transformPerspective: 800 },
+        { opacity: 1, y: 0, rotationX: 0, duration: 1.2, delay: 0.5, ease: "power3.out" }
       );
       gsap.fromTo('.btn-book',
         { opacity: 0, y: 100, rotationX: -50, transformPerspective: 800 },
@@ -230,7 +218,7 @@ const ScrollAnimation = () => {
           </h2>
 
           {/* Contact Info (Glassmorphism Pill) */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-8 mb-6 text-[10px] sm:text-xs md:text-sm text-white/95 font-medium opacity-0 pointer-events-auto tracking-widest backdrop-blur-md bg-[#2d241c]/60 px-6 py-3 rounded-full border border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+          <div className="contact-pill flex flex-col sm:flex-row items-center gap-3 sm:gap-8 mb-6 text-[10px] sm:text-xs md:text-sm text-white/95 font-medium opacity-0 pointer-events-auto tracking-widest   px-6 py-3 rounded-full border border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
             <span className="flex items-center gap-3">
               <svg className="w-4 h-4 text-[#c5a070]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
               +91 9363008505
