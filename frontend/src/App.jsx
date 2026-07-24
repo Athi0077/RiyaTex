@@ -14,6 +14,7 @@ import AdminSarees from './pages/AdminSarees';
 import AdminBookings from './pages/AdminBookings';
 import Profile from './pages/Profile';
 import FloatingFeatures from './components/FloatingFeatures';
+import ScrollToTop from './components/ScrollToTop';
 import { Toaster } from 'react-hot-toast';
 import './index.css';
 
@@ -24,6 +25,7 @@ function App() {
       <WishlistDrawer />
       <CartDrawer />
       <FloatingFeatures />
+      <ScrollToTop />
       <Routes>
       {/* Public Routes with Standard Layout */}
       <Route path="/" element={
